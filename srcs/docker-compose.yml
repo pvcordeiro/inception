@@ -9,8 +9,8 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD_FILE: /run/secrets/db_password
     secrets:
       - db_root_password
@@ -30,16 +30,16 @@ services:
     restart: unless-stopped
     environment:
       WORDPRESS_DB_HOST: mariadb
-      WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
       WORDPRESS_DB_PASSWORD_FILE: /run/secrets/db_password
-      DOMAIN_NAME: paude-so.42.fr
-      WP_ADMIN_USER: admin
-      WP_ADMIN_PASSWORD: admin_password
-      WP_ADMIN_EMAIL: admin@paude-so.42.fr
-      WP_USER: user
-      WP_USER_PASSWORD: user_password
-      WP_USER_EMAIL: user@paude-so.42.fr
+      DOMAIN_NAME: ${DOMAIN_NAME}
+      WP_ADMIN_USER: ${WP_ADMIN_USER}
+      WP_ADMIN_PASSWORD: ${WP_ADMIN_PASSWORD}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+      WP_USER: ${WP_USER}
+      WP_USER_PASSWORD: ${WP_USER_PASSWORD}
+      WP_USER_EMAIL: ${WP_USER_EMAIL}
     secrets:
       - db_password
     volumes:

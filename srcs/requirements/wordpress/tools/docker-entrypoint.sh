@@ -1,13 +1,16 @@
 #!/bin/bash
 set -eo pipefail
 
-# Function to read secrets
+# Function to read secrets or fallback to environment
 get_secret() {
     local secret_file="/run/secrets/$1"
     if [ -f "$secret_file" ]; then
         cat "$secret_file"
     else
-        echo ""
+        case "$1" in
+            "db_password") echo "$MYSQL_PASSWORD" ;;
+            *) echo "" ;;
+        esac
     fi
 }
 
@@ -37,6 +40,20 @@ if [ ! -f wp-config.php ]; then
     sed -i "s/username_here/$WORDPRESS_DB_USER/" wp-config.php
     sed -i "s/password_here/$(get_secret db_password)/" wp-config.php
     sed -i "s/localhost/$WORDPRESS_DB_HOST/" wp-config.php
+    
+    # Install WordPress and create users
+    wp core install --url="https://$DOMAIN_NAME" \
+        --title="Inception WordPress" \
+        --admin_user="$WP_ADMIN_USER" \
+        --admin_password="$WP_ADMIN_PASSWORD" \
+        --admin_email="$WP_ADMIN_EMAIL" \
+        --allow-root
+    
+    # Create additional user
+    wp user create "$WP_USER" "$WP_USER_EMAIL" \
+        --user_pass="$WP_USER_PASSWORD" \
+        --role=author \
+        --allow-root
     
     echo "WordPress setup completed"
 fi

@@ -1,0 +1,19 @@
+# Inception project gitignore
+
+# Secrets and credentials
+secrets/
+*.env
+
+# Docker volumes data
+/home/*/data/
+
+# System files
+.DS_Store
+*~
+
+# IDE files
+.vscode/
+.idea/
+
+# Logs
+*.log

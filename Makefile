@@ -3,25 +3,28 @@ all:
 	@printf "Launching configuration ${name}...\n"
 	@mkdir -p /home/paude-so/data/mariadb
 	@mkdir -p /home/paude-so/data/wordpress
-	@docker-compose -f ./srcs/docker-compose.yml --env-file ./secrets/credentials.txt up -d
+	@./srcs/tools/setup-secrets.sh
+	@docker-compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env up -d
 
 build:
 	@printf "Building configuration ${name}...\n"
 	@mkdir -p /home/paude-so/data/mariadb
 	@mkdir -p /home/paude-so/data/wordpress
-	@docker-compose -f ./srcs/docker-compose.yml --env-file ./secrets/credentials.txt up -d --build
+	@./srcs/tools/setup-secrets.sh
+	@docker-compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env up -d --build
 
 down:
 	@printf "Stopping configuration ${name}...\n"
-	@docker-compose -f ./srcs/docker-compose.yml --env-file ./secrets/credentials.txt down
+	@docker-compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env down
 
 re:
 	@printf "Rebuilding configuration ${name}...\n"
-	@docker-compose -f ./srcs/docker-compose.yml --env-file ./secrets/credentials.txt down
+	@docker-compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env down
 	@docker system prune -a
 	@mkdir -p /home/paude-so/data/mariadb
 	@mkdir -p /home/paude-so/data/wordpress
-	@docker-compose -f ./srcs/docker-compose.yml --env-file ./secrets/credentials.txt up -d --build
+	@./srcs/tools/setup-secrets.sh
+	@docker-compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env up -d --build
 
 clean: down
 	@printf "Cleaning configuration ${name}...\n"

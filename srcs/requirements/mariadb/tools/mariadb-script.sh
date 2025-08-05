@@ -10,9 +10,16 @@ get_secret() {
     fi
 }
 
-# Get passwords from secrets
+# Get passwords from secrets or environment
 ROOT_PASSWORD=$(get_secret "db_root_password")
+if [ -z "$ROOT_PASSWORD" ]; then
+    ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD"
+fi
+
 DB_PASSWORD=$(get_secret "db_password")
+if [ -z "$DB_PASSWORD" ]; then
+    DB_PASSWORD="$MYSQL_PASSWORD"
+fi
 
 # Ensure necessary directories exist with proper permissions
 mkdir -p /run/mysqld /var/lib/mysql

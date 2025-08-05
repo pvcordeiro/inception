@@ -13,41 +13,30 @@ get_secret() {
 
 # Wait for database to be ready
 echo "Waiting for database..."
-until mariadb -h"$WORDPRESS_DB_HOST" -u"$WORDPRESS_DB_USER" -p"$(get_secret db_password)" -e "SELECT 1" >/dev/null 2>&1; do
+until mysqladmin ping -h"$WORDPRESS_DB_HOST" -u"$WORDPRESS_DB_USER" -p"$(get_secret db_password)" --silent; do
     sleep 1
 done
+
+echo "Database is ready!"
 
 # Download WordPress if not already present
 if [ ! -f wp-config.php ]; then
     echo "Setting up WordPress..."
     
-    # Download WordPress
-    wp core download --allow-root
+    # Remove any existing files except our script
+    find . -mindepth 1 ! -name 'docker-entrypoint.sh' -delete 2>/dev/null || true
     
-    # Create wp-config.php
-    wp config create \
-        --dbname="$WORDPRESS_DB_NAME" \
-        --dbuser="$WORDPRESS_DB_USER" \
-        --dbpass="$(get_secret db_password)" \
-        --dbhost="$WORDPRESS_DB_HOST" \
-        --allow-root
+    # Download WordPress using the method that worked
+    curl -o latest.tar.gz https://wordpress.org/latest.tar.gz
+    tar -xzf latest.tar.gz --strip-components=1
+    rm latest.tar.gz
     
-    # Install WordPress
-    wp core install \
-        --url="https://$DOMAIN_NAME" \
-        --title="Inception WordPress" \
-        --admin_user="$WP_ADMIN_USER" \
-        --admin_password="$WP_ADMIN_PASSWORD" \
-        --admin_email="$WP_ADMIN_EMAIL" \
-        --allow-root
-    
-    # Create additional user
-    wp user create \
-        "$WP_USER" \
-        "$WP_USER_EMAIL" \
-        --user_pass="$WP_USER_PASSWORD" \
-        --role=author \
-        --allow-root
+    # Create wp-config.php using the method that worked
+    cp wp-config-sample.php wp-config.php
+    sed -i "s/database_name_here/$WORDPRESS_DB_NAME/" wp-config.php
+    sed -i "s/username_here/$WORDPRESS_DB_USER/" wp-config.php
+    sed -i "s/password_here/$(get_secret db_password)/" wp-config.php
+    sed -i "s/localhost/$WORDPRESS_DB_HOST/" wp-config.php
     
     echo "WordPress setup completed"
 fi

@@ -26,7 +26,7 @@ echo "Database is ready!"
 if [ ! -f wp-config.php ]; then
     echo "Setting up WordPress..."
     
-    # Remove any existing files except our script
+    # Remove any existing files except script
     find . -mindepth 1 ! -name 'docker-entrypoint.sh' -delete 2>/dev/null || true
     
     curl -o latest.tar.gz https://wordpress.org/latest.tar.gz

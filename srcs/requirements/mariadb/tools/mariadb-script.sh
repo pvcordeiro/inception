@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Function to read secrets
 get_secret() {
     local secret_file="/run/secrets/$1"
     if [ -f "$secret_file" ]; then
@@ -10,7 +9,6 @@ get_secret() {
     fi
 }
 
-# Get passwords from secrets or environment
 ROOT_PASSWORD=$(get_secret "db_root_password")
 if [ -z "$ROOT_PASSWORD" ]; then
     ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD"
@@ -21,28 +19,22 @@ if [ -z "$DB_PASSWORD" ]; then
     DB_PASSWORD="$MYSQL_PASSWORD"
 fi
 
-# Ensure necessary directories exist with proper permissions
 mkdir -p /run/mysqld /var/lib/mysql
 chown -R mysql:mysql /run/mysqld /var/lib/mysql
 chmod 755 /run/mysqld
 
-# Initialize database if it doesn't exist or if it's empty
 if [ ! -f "/var/lib/mysql/mysql/user.MYD" ]; then
     echo "Initializing MariaDB database..."
     
-    # Install database
     mysql_install_db --user=mysql --datadir=/var/lib/mysql --auth-root-authentication-method=normal
     
-    # Start mysqld temporarily for setup
     mysqld --user=mysql --skip-networking --socket=/tmp/mysql.sock &
     MYSQL_PID=$!
     
-    # Wait for MySQL to start
     until mysqladmin --socket=/tmp/mysql.sock ping >/dev/null 2>&1; do
         sleep 1
     done
     
-    # Set up database and users
     mysql --socket=/tmp/mysql.sock <<-EOSQL
         DELETE FROM mysql.user WHERE user NOT IN ('mysql.sys', 'mysqlxsys', 'root') OR host NOT IN ('localhost');
         DELETE FROM mysql.user WHERE user='';
@@ -59,13 +51,11 @@ if [ ! -f "/var/lib/mysql/mysql/user.MYD" ]; then
         FLUSH PRIVILEGES;
 EOSQL
     
-    # Stop temporary MySQL instance
     kill $MYSQL_PID
     wait $MYSQL_PID
     
     echo "MariaDB initialization completed"
 fi
 
-# Start mysqld as PID 1
 echo "Starting MariaDB..."
 exec mysqld --user=mysql

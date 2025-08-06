@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Script to generate secret files from environment variables
-# This ensures credentials come from .env file during evaluation
 
 set -e
 

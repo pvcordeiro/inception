@@ -5,7 +5,6 @@ RUN apt-get update && apt-get install -y \
     mariadb-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Create necessary directories and set permissions
 RUN mkdir -p /run/mysqld /var/lib/mysql \
     && chown -R mysql:mysql /run/mysqld /var/lib/mysql
 

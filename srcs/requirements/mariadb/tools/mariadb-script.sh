@@ -1,23 +1,8 @@
 #!/bin/bash
 
-get_secret() {
-    local secret_file="/run/secrets/$1"
-    if [ -f "$secret_file" ]; then
-        cat "$secret_file"
-    else
-        echo ""
-    fi
-}
-
-ROOT_PASSWORD=$(get_secret "db_root_password")
-if [ -z "$ROOT_PASSWORD" ]; then
-    ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD"
-fi
-
-DB_PASSWORD=$(get_secret "db_password")
-if [ -z "$DB_PASSWORD" ]; then
-    DB_PASSWORD="$MYSQL_PASSWORD"
-fi
+# Use environment variables directly instead of secrets
+ROOT_PASSWORD="$MYSQL_ROOT_PASSWORD"
+DB_PASSWORD="$MYSQL_PASSWORD"
 
 mkdir -p /run/mysqld /var/lib/mysql
 chown -R mysql:mysql /run/mysqld /var/lib/mysql

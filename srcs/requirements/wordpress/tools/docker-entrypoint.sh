@@ -1,20 +1,8 @@
 #!/bin/bash
 set -eo pipefail
 
-get_secret() {
-    local secret_file="/run/secrets/$1"
-    if [ -f "$secret_file" ]; then
-        cat "$secret_file"
-    else
-        case "$1" in
-            "db_password") echo "$MYSQL_PASSWORD" ;;
-            *) echo "" ;;
-        esac
-    fi
-}
-
 echo "Waiting for database..."
-until mysqladmin ping -h"$WORDPRESS_DB_HOST" -u"$WORDPRESS_DB_USER" -p"$(get_secret db_password)" --silent; do
+until mysqladmin ping -h"$WORDPRESS_DB_HOST" -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" --silent; do
     sleep 1
 done
 
@@ -31,7 +19,7 @@ if [ ! -f wp-config.php ]; then
     cp wp-config-sample.php wp-config.php
     sed -i "s/database_name_here/$WORDPRESS_DB_NAME/" wp-config.php
     sed -i "s/username_here/$WORDPRESS_DB_USER/" wp-config.php
-    sed -i "s/password_here/$(get_secret db_password)/" wp-config.php
+    sed -i "s/password_here/$WORDPRESS_DB_PASSWORD/" wp-config.php
     sed -i "s/localhost/$WORDPRESS_DB_HOST/" wp-config.php
     
     wp core install --url="https://$DOMAIN_NAME" \

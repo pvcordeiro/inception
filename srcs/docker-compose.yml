@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mariadb:
     build:
@@ -71,10 +69,10 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/paude-so/data/mariadb
+      device: /home/${USER}/data/mariadb
   wordpress_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/paude-so/data/wordpress
+      device: /home/${USER}/data/wordpress

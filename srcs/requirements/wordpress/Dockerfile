@@ -20,10 +20,8 @@ COPY conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
 COPY tools/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Create necessary directories for PHP-FPM
 RUN mkdir -p /run/php
 
-# Download WP-CLI using working method
 RUN curl -L -o wp-cli.phar 'https://github.com/wp-cli/wp-cli/releases/download/v2.10.0/wp-cli-2.10.0.phar' \
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp \

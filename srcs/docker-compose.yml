@@ -11,7 +11,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - mariadb_data:/var/lib/mysql
+      - /home/${USER}/data/mariadb:/var/lib/mysql
     networks:
       - inception
     expose:
@@ -36,7 +36,7 @@ services:
       WP_USER_PASSWORD: ${WP_USER_PASSWORD}
       WP_USER_EMAIL: ${WP_USER_EMAIL}
     volumes:
-      - wordpress_data:/var/www/html
+      - /home/${USER}/data/wordpress:/var/www/html
     networks:
       - inception
     depends_on:
@@ -53,7 +53,7 @@ services:
     ports:
       - "443:443"
     volumes:
-      - wordpress_data:/var/www/html
+      - /home/${USER}/data/wordpress:/var/www/html
     networks:
       - inception
     depends_on:
@@ -62,17 +62,3 @@ services:
 networks:
   inception:
     driver: bridge
-
-volumes:
-  mariadb_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/${USER}/data/mariadb
-  wordpress_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: /home/${USER}/data/wordpress

@@ -7,7 +7,7 @@ all:
 build:
 	@echo "Building configuration inception...\n"
 	@$(DOCKER_COMPOSE) down -v || true
-	@$(DOCKER_COMPOSE) up -d --build --force-recreate
+	@$(DOCKER_COMPOSE) up -d --build
 
 down:
 	@echo "Stopping configuration inception...\n"

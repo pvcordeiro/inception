@@ -2,7 +2,7 @@
 set -eo pipefail
 
 echo "Waiting for database..."
-until mysqladmin ping -h"$WORDPRESS_DB_HOST" -u"$WORDPRESS_DB_USER" -p"$WORDPRESS_DB_PASSWORD" --silent; do
+until mysqladmin ping -h"$WP_DB_HOST" -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent; do
     sleep 1
 done
 
@@ -17,10 +17,10 @@ if [ ! -f wp-config.php ]; then
     tar -xzf latest.tar.gz --strip-components=1
     rm latest.tar.gz
     cp wp-config-sample.php wp-config.php
-    sed -i "s/database_name_here/$WORDPRESS_DB_NAME/" wp-config.php
-    sed -i "s/username_here/$WORDPRESS_DB_USER/" wp-config.php
-    sed -i "s/password_here/$WORDPRESS_DB_PASSWORD/" wp-config.php
-    sed -i "s/localhost/$WORDPRESS_DB_HOST/" wp-config.php
+    sed -i "s/database_name_here/$MYSQL_DATABASE/" wp-config.php
+    sed -i "s/username_here/$MYSQL_USER/" wp-config.php
+    sed -i "s/password_here/$MYSQL_PASSWORD/" wp-config.php
+    sed -i "s/localhost/$WP_DB_HOST/" wp-config.php
     
     wp core install --url="https://$DOMAIN_NAME" \
         --title="paude-so inception" \

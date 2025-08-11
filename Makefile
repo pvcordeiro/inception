@@ -1,23 +1,25 @@
+DOCKER_COMPOSE=docker compose -f ./srcs/docker-compose.yml
+
 all:
-	@printf "Launching configuration inception...\n"
-	@docker compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env up -d
+	@echo "Launching configuration inception...\n"
+	@$(DOCKER_COMPOSE) up -d
 
 build:
-	@printf "Building configuration inception...\n"
-	@docker compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env down -v || true
-	@docker compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env up -d --build --force-recreate
+	@echo "Building configuration inception...\n"
+	@$(DOCKER_COMPOSE) down -v || true
+	@$(DOCKER_COMPOSE) up -d --build --force-recreate
 
 down:
-	@printf "Stopping configuration inception...\n"
-	@docker compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env down
+	@echo "Stopping configuration inception...\n"
+	@$(DOCKER_COMPOSE) down
 
 clean:
-	@printf "Cleaning configuration inception...\n"
-	@docker compose -f ./srcs/docker-compose.yml --env-file ./srcs/.env down -v
+	@echo "Cleaning configuration inception...\n"
+	@$(DOCKER_COMPOSE) down -v
 	@docker system prune -a
 
 fclean: clean
-	@printf "Total clean of all configurations docker\n"
+	@echo "Total clean of all configurations docker\n"
 	@docker stop $$(docker ps -qa) || true
 	@docker system prune --all --force --volumes
 	@docker network prune --force
@@ -25,6 +27,6 @@ fclean: clean
 	@sudo rm -rf $(HOME)/data
 
 re: fclean build
-	@printf "Rebuilding configuration inception...\n"
+	@echo "Rebuilding configuration inception...\n"
 
 .PHONY: all build down re clean fclean

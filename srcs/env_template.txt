@@ -13,3 +13,4 @@ WP_ADMIN_EMAIL=admin@login.42.fr
 WP_USER=user
 WP_USER_PASSWORD=your_user_password_here
 WP_USER_EMAIL=user@login.42.fr
+WP_DB_HOST=mariadb
